@@ -1,9 +1,15 @@
 using System;
+using System.Collections.Generic;
 
 namespace Northwind.DAL
 {
   public class Order
   {
+    public Order()
+    {
+      OrderDetails = new List<OrderDetail>();
+    }
+
     public int OrderId { get; set; }
     public string CustomerId { get; set; }
     public int? EmployeeId { get; set; }
@@ -19,5 +25,6 @@ namespace Northwind.DAL
     public string ShipPostalCode { get; set; }
     public string ShipCountry { get; set; }
     public OrderStatus Status { get; set; }
+    public ICollection<OrderDetail> OrderDetails { get; set; }
   }
 }
