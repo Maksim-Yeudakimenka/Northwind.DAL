@@ -136,5 +136,51 @@ namespace Northwind.DAL
         }
       }
     }
+
+    public Order CreateOrder(Order order)
+    {
+      const string commandText =
+        "INSERT dbo.Orders (CustomerID, EmployeeID, OrderDate, RequiredDate, ShippedDate, ShipVia, Freight, ShipName, ShipAddress, ShipCity, ShipRegion, ShipPostalCode, ShipCountry) " +
+        "VALUES (@CustomerID, @EmployeeID, @OrderDate, @RequiredDate, @ShippedDate, @ShipVia, @Freight, @ShipName, @ShipAddress, @ShipCity, @ShipRegion, @ShipPostalCode, @ShipCountry); " +
+        "SELECT SCOPE_IDENTITY() AS OrderID";
+
+      using (var connection = _providerFactory.CreateConnection())
+      {
+        connection.ConnectionString = _connectionString;
+        connection.Open();
+
+        using (var command = connection.CreateCommand())
+        {
+          command.CommandText = commandText;
+          command.CommandType = CommandType.Text;
+
+          command.AddParameter("@CustomerID", order.CustomerId);
+          command.AddParameter("@EmployeeID", order.EmployeeId);
+          command.AddParameter("@OrderDate", DateTime.UtcNow);
+          command.AddParameter("@RequiredDate", order.RequiredDate);
+          command.AddParameter("@ShippedDate", DBNull.Value);
+          command.AddParameter("@ShipVia", order.ShipVia);
+          command.AddParameter("@Freight", order.Freight);
+          command.AddParameter("@ShipName", order.ShipName);
+          command.AddParameter("@ShipAddress", order.ShipAddress);
+          command.AddParameter("@ShipCity", order.ShipCity);
+          command.AddParameter("@ShipRegion", order.ShipRegion);
+          command.AddParameter("@ShipPostalCode", order.ShipPostalCode);
+          command.AddParameter("@ShipCountry", order.ShipCountry);
+
+          var orderId = Convert.ToInt32(command.ExecuteScalar());
+
+          foreach (var orderDetail in order.OrderDetails)
+          {
+            orderDetail.Order = orderDetail.Order ?? new Order();
+            orderDetail.Order.OrderId = orderId;
+
+            _orderDetailsRepository.AddOrderDetailToOrder(orderDetail);
+          }
+
+          return GetOrderById(orderId);
+        }
+      }
+    }
   }
 }

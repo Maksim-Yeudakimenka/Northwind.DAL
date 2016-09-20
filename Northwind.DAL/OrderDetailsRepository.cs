@@ -60,5 +60,32 @@ namespace Northwind.DAL
         }
       }
     }
+
+    public void AddOrderDetailToOrder(OrderDetail orderDetail)
+    {
+      const string commandText =
+        "INSERT INTO [Order Details] (OrderID, ProductID, UnitPrice, Quantity, Discount) " +
+        "VALUES (@OrderID, @ProductID, @UnitPrice, @Quantity, @Discount)";
+
+      using (var connection = _providerFactory.CreateConnection())
+      {
+        connection.ConnectionString = _connectionString;
+        connection.Open();
+
+        using (var command = connection.CreateCommand())
+        {
+          command.CommandText = commandText;
+          command.CommandType = CommandType.Text;
+
+          command.AddParameter("@OrderID", orderDetail.Order.OrderId);
+          command.AddParameter("@ProductID", orderDetail.Product.ProductId);
+          command.AddParameter("@UnitPrice", orderDetail.UnitPrice);
+          command.AddParameter("@Quantity", orderDetail.Quantity);
+          command.AddParameter("@Discount", orderDetail.Discount);
+
+          command.ExecuteNonQuery();
+        }
+      }
+    }
   }
 }

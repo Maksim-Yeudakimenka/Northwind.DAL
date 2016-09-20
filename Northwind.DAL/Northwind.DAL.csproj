@@ -40,6 +40,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="DbCommandExtensions.cs" />
     <Compile Include="IOrderDetailsRepository.cs" />
     <Compile Include="IOrderRepository.cs" />
     <Compile Include="IProductRepository.cs" />

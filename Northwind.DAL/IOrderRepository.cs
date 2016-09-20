@@ -7,5 +7,7 @@ namespace Northwind.DAL
     IEnumerable<Order> GetOrders();
 
     Order GetOrderById(int id);
+
+    Order CreateOrder(Order order);
   }
 }
