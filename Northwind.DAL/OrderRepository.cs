@@ -257,5 +257,23 @@ namespace Northwind.DAL
         }
       }
     }
+
+    public Order MarkOrdered(Order order)
+    {
+      var updatingOrder = GetOrderById(order.OrderId);
+
+      updatingOrder.OrderDate = DateTime.UtcNow;
+
+      return UpdateOrder(order);
+    }
+
+    public Order MarkShipped(Order order)
+    {
+      var updatingOrder = GetOrderById(order.OrderId);
+
+      updatingOrder.ShippedDate = DateTime.UtcNow;
+
+      return UpdateOrder(order);
+    }
   }
 }

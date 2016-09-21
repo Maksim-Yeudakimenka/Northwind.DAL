@@ -13,5 +13,9 @@ namespace Northwind.DAL
     Order UpdateOrder(Order order);
 
     void DeleteOrder(Order order);
+
+    Order MarkOrdered(Order order);
+
+    Order MarkShipped(Order order);
   }
 }
