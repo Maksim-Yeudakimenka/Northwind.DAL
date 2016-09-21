@@ -6,6 +6,10 @@ namespace Northwind.DAL
   {
     IEnumerable<OrderDetail> GetOrderDetailsByOrderId(int id);
 
-    void AddOrderDetailToOrder(OrderDetail orderDetail);
+    void AddOrderDetails(Order order);
+
+    void UpdateOrderDetails(Order order);
+
+    void DeleteOrderDetails(Order order);
   }
 }

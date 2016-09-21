@@ -9,5 +9,7 @@ namespace Northwind.DAL
     Order GetOrderById(int id);
 
     Order CreateOrder(Order order);
+
+    Order UpdateOrder(Order order);
   }
 }

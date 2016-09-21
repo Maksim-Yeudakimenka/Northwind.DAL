@@ -61,11 +61,46 @@ namespace Northwind.DAL
       }
     }
 
-    public void AddOrderDetailToOrder(OrderDetail orderDetail)
+    public void AddOrderDetails(Order order)
     {
       const string commandText =
-        "INSERT INTO [Order Details] (OrderID, ProductID, UnitPrice, Quantity, Discount) " +
+        "INSERT INTO dbo.[Order Details] (OrderID, ProductID, UnitPrice, Quantity, Discount) " +
         "VALUES (@OrderID, @ProductID, @UnitPrice, @Quantity, @Discount)";
+
+      using (var connection = _providerFactory.CreateConnection())
+      {
+        connection.ConnectionString = _connectionString;
+        connection.Open();
+
+        foreach (var orderDetail in order.OrderDetails)
+        {
+          using (var command = connection.CreateCommand())
+          {
+            command.CommandText = commandText;
+            command.CommandType = CommandType.Text;
+
+            command.AddParameter("@OrderID", order.OrderId);
+            command.AddParameter("@ProductID", orderDetail.Product.ProductId);
+            command.AddParameter("@UnitPrice", orderDetail.UnitPrice);
+            command.AddParameter("@Quantity", orderDetail.Quantity);
+            command.AddParameter("@Discount", orderDetail.Discount);
+
+            command.ExecuteNonQuery();
+          }
+        }
+      }
+    }
+
+    public void UpdateOrderDetails(Order order)
+    {
+      DeleteOrderDetails(order);
+      AddOrderDetails(order);
+    }
+
+    public void DeleteOrderDetails(Order order)
+    {
+      const string commandText =
+        "DELETE FROM dbo.[Order Details] WHERE OrderID = @id";
 
       using (var connection = _providerFactory.CreateConnection())
       {
@@ -77,11 +112,7 @@ namespace Northwind.DAL
           command.CommandText = commandText;
           command.CommandType = CommandType.Text;
 
-          command.AddParameter("@OrderID", orderDetail.Order.OrderId);
-          command.AddParameter("@ProductID", orderDetail.Product.ProductId);
-          command.AddParameter("@UnitPrice", orderDetail.UnitPrice);
-          command.AddParameter("@Quantity", orderDetail.Quantity);
-          command.AddParameter("@Discount", orderDetail.Discount);
+          command.AddParameter("@id", order.OrderId);
 
           command.ExecuteNonQuery();
         }

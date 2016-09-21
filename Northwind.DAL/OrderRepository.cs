@@ -140,7 +140,7 @@ namespace Northwind.DAL
     public Order CreateOrder(Order order)
     {
       const string commandText =
-        "INSERT dbo.Orders (CustomerID, EmployeeID, OrderDate, RequiredDate, ShippedDate, ShipVia, Freight, ShipName, ShipAddress, ShipCity, ShipRegion, ShipPostalCode, ShipCountry) " +
+        "INSERT INTO dbo.Orders (CustomerID, EmployeeID, OrderDate, RequiredDate, ShippedDate, ShipVia, Freight, ShipName, ShipAddress, ShipCity, ShipRegion, ShipPostalCode, ShipCountry) " +
         "VALUES (@CustomerID, @EmployeeID, @OrderDate, @RequiredDate, @ShippedDate, @ShipVia, @Freight, @ShipName, @ShipAddress, @ShipCity, @ShipRegion, @ShipPostalCode, @ShipCountry); " +
         "SELECT SCOPE_IDENTITY() AS OrderID";
 
@@ -156,7 +156,7 @@ namespace Northwind.DAL
 
           command.AddParameter("@CustomerID", order.CustomerId);
           command.AddParameter("@EmployeeID", order.EmployeeId);
-          command.AddParameter("@OrderDate", DateTime.UtcNow);
+          command.AddParameter("@OrderDate", DBNull.Value);
           command.AddParameter("@RequiredDate", order.RequiredDate);
           command.AddParameter("@ShippedDate", DBNull.Value);
           command.AddParameter("@ShipVia", order.ShipVia);
@@ -168,17 +168,65 @@ namespace Northwind.DAL
           command.AddParameter("@ShipPostalCode", order.ShipPostalCode);
           command.AddParameter("@ShipCountry", order.ShipCountry);
 
-          var orderId = Convert.ToInt32(command.ExecuteScalar());
+          order.OrderId = Convert.ToInt32(command.ExecuteScalar());
 
-          foreach (var orderDetail in order.OrderDetails)
-          {
-            orderDetail.Order = orderDetail.Order ?? new Order();
-            orderDetail.Order.OrderId = orderId;
+          _orderDetailsRepository.AddOrderDetails(order);
 
-            _orderDetailsRepository.AddOrderDetailToOrder(orderDetail);
-          }
+          return GetOrderById(order.OrderId);
+        }
+      }
+    }
 
-          return GetOrderById(orderId);
+    public Order UpdateOrder(Order order)
+    {
+      const string commandText =
+        "UPDATE dbo.Orders SET CustomerID = @CustomerID, EmployeeID = @EmployeeID, RequiredDate = @RequiredDate, ShipVia = @ShipVia, Freight = @Freight, ShipName = @ShipName, ShipAddress = @ShipAddress, ShipCity = @ShipCity, ShipRegion = @ShipRegion, ShipPostalCode = @ShipPostalCode, ShipCountry = @ShipCountry WHERE OrderID = @id";
+
+      var updatingOrder = GetOrderById(order.OrderId);
+
+      if (updatingOrder.Status == OrderStatus.Ordered || updatingOrder.Status == OrderStatus.Shipped)
+      {
+        throw new ArgumentException("Can't update ordered or shipped order", nameof(order.Status));
+      }
+
+      if (order.OrderDate != null)
+      {
+        throw new ArgumentException("Can't change order date of already ordered order", nameof(order.OrderDate));
+      }
+
+      if (order.ShippedDate != null)
+      {
+        throw new ArgumentException("Can't change shipped date of already shipped order", nameof(order.ShippedDate));
+      }
+
+      using (var connection = _providerFactory.CreateConnection())
+      {
+        connection.ConnectionString = _connectionString;
+        connection.Open();
+
+        using (var command = connection.CreateCommand())
+        {
+          command.CommandText = commandText;
+          command.CommandType = CommandType.Text;
+
+          command.AddParameter("@id", order.OrderId);
+          command.AddParameter("@CustomerID", order.CustomerId);
+          command.AddParameter("@EmployeeID", order.EmployeeId);
+          command.AddParameter("@RequiredDate", order.RequiredDate);
+          command.AddParameter("@ShipVia", order.ShipVia);
+          command.AddParameter("@Freight", order.Freight);
+          command.AddParameter("@ShipName", order.ShipName);
+          command.AddParameter("@ShipAddress", order.ShipAddress);
+          command.AddParameter("@ShipCity", order.ShipCity);
+          command.AddParameter("@ShipRegion", order.ShipRegion);
+          command.AddParameter("@ShipPostalCode", order.ShipPostalCode);
+          command.AddParameter("@ShipCountry", order.ShipCountry);
+
+          command.ExecuteNonQuery();
+
+          _orderDetailsRepository.UpdateOrderDetails(order);
+
+          return GetOrderById(order.OrderId);
         }
       }
     }
