@@ -40,6 +40,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CustomerOrderDetail.cs" />
+    <Compile Include="CustomerProductTotal.cs" />
     <Compile Include="DbCommandExtensions.cs" />
     <Compile Include="IOrderDetailsRepository.cs" />
     <Compile Include="IOrderRepository.cs" />

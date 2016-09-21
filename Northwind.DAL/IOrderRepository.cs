@@ -17,5 +17,9 @@ namespace Northwind.DAL
     Order MarkOrdered(Order order);
 
     Order MarkShipped(Order order);
+
+    IEnumerable<CustomerProductTotal> GetCustomerOrdersHistory(string customerId);
+
+    IEnumerable<CustomerOrderDetail> GetCustomerOrderDetails(int orderId);
   }
 }

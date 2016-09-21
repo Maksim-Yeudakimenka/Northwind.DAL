@@ -275,5 +275,76 @@ namespace Northwind.DAL
 
       return UpdateOrder(order);
     }
+
+    public IEnumerable<CustomerProductTotal> GetCustomerOrdersHistory(string customerId)
+    {
+      const string commandText =
+        "dbo.CustOrderHist";
+
+      using (var connection = _providerFactory.CreateConnection())
+      {
+        connection.ConnectionString = _connectionString;
+        connection.Open();
+
+        using (var command = connection.CreateCommand())
+        {
+          command.CommandText = commandText;
+          command.CommandType = CommandType.StoredProcedure;
+
+          command.AddParameter("@CustomerID", customerId);
+
+          using (var reader = command.ExecuteReader())
+          {
+            while (reader.Read())
+            {
+              var customerProductTotal = new CustomerProductTotal
+              {
+                ProductName = (string) reader["ProductName"],
+                Total = (int) reader["Total"]
+              };
+
+              yield return customerProductTotal;
+            }
+          }
+        }
+      }
+    }
+
+    public IEnumerable<CustomerOrderDetail> GetCustomerOrderDetails(int orderId)
+    {
+      const string commandText =
+        "dbo.CustOrdersDetail";
+
+      using (var connection = _providerFactory.CreateConnection())
+      {
+        connection.ConnectionString = _connectionString;
+        connection.Open();
+
+        using (var command = connection.CreateCommand())
+        {
+          command.CommandText = commandText;
+          command.CommandType = CommandType.StoredProcedure;
+
+          command.AddParameter("@OrderID", orderId);
+
+          using (var reader = command.ExecuteReader())
+          {
+            while (reader.Read())
+            {
+              var customerOrderDetail = new CustomerOrderDetail
+              {
+                ProductName = (string) reader["ProductName"],
+                UnitPrice = (decimal) reader["UnitPrice"],
+                Quantity = (short) reader["Quantity"],
+                Discount = (int) reader["Discount"],
+                ExtendedPrice = (decimal) reader["ExtendedPrice"]
+              };
+
+              yield return customerOrderDetail;
+            }
+          }
+        }
+      }
+    }
   }
 }
