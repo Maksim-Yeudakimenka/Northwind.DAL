@@ -182,9 +182,7 @@ namespace Northwind.DAL
       const string commandText =
         "UPDATE dbo.Orders SET CustomerID = @CustomerID, EmployeeID = @EmployeeID, RequiredDate = @RequiredDate, ShipVia = @ShipVia, Freight = @Freight, ShipName = @ShipName, ShipAddress = @ShipAddress, ShipCity = @ShipCity, ShipRegion = @ShipRegion, ShipPostalCode = @ShipPostalCode, ShipCountry = @ShipCountry WHERE OrderID = @id";
 
-      var updatingOrder = GetOrderById(order.OrderId);
-
-      if (updatingOrder.Status == OrderStatus.Ordered || updatingOrder.Status == OrderStatus.Shipped)
+      if (order.Status == OrderStatus.Ordered || order.Status == OrderStatus.Shipped)
       {
         throw new ArgumentException("Can't update ordered or shipped order", nameof(order.Status));
       }
@@ -227,6 +225,35 @@ namespace Northwind.DAL
           _orderDetailsRepository.UpdateOrderDetails(order);
 
           return GetOrderById(order.OrderId);
+        }
+      }
+    }
+
+    public void DeleteOrder(Order order)
+    {
+      const string commandText =
+        "DELETE FROM dbo.Orders WHERE OrderID = @id";
+
+      if (order.Status == OrderStatus.Shipped)
+      {
+        throw new ArgumentException("Can't delete shipped order", nameof(order.Status));
+      }
+
+      _orderDetailsRepository.DeleteOrderDetails(order);
+
+      using (var connection = _providerFactory.CreateConnection())
+      {
+        connection.ConnectionString = _connectionString;
+        connection.Open();
+
+        using (var command = connection.CreateCommand())
+        {
+          command.CommandText = commandText;
+          command.CommandType = CommandType.Text;
+
+          command.AddParameter("@id", order.OrderId);
+
+          command.ExecuteNonQuery();
         }
       }
     }
