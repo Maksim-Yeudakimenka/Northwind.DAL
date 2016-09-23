@@ -40,21 +40,22 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="CustomerOrderDetail.cs" />
-    <Compile Include="CustomerProductTotal.cs" />
-    <Compile Include="DbCommandExtensions.cs" />
-    <Compile Include="IOrderDetailsRepository.cs" />
-    <Compile Include="IOrderRepository.cs" />
-    <Compile Include="IProductRepository.cs" />
-    <Compile Include="OrderDetail.cs" />
-    <Compile Include="OrderDetailsRepository.cs" />
-    <Compile Include="OrderRepository.cs" />
-    <Compile Include="Order.cs" />
-    <Compile Include="OrderStatus.cs" />
-    <Compile Include="Product.cs" />
-    <Compile Include="ProductRepository.cs" />
+    <Compile Include="Models\CustomerOrderDetail.cs" />
+    <Compile Include="Models\CustomerProductTotal.cs" />
+    <Compile Include="Helpers\DbCommandExtensions.cs" />
+    <Compile Include="Repositories\IOrderDetailsRepository.cs" />
+    <Compile Include="Repositories\IOrderRepository.cs" />
+    <Compile Include="Repositories\IProductRepository.cs" />
+    <Compile Include="Models\OrderDetail.cs" />
+    <Compile Include="Repositories\OrderDetailsRepository.cs" />
+    <Compile Include="Repositories\OrderRepository.cs" />
+    <Compile Include="Models\Order.cs" />
+    <Compile Include="Models\OrderStatus.cs" />
+    <Compile Include="Models\Product.cs" />
+    <Compile Include="Repositories\ProductRepository.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

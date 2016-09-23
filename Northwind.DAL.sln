@@ -5,6 +5,8 @@ VisualStudioVersion = 14.0.25123.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Northwind.DAL", "Northwind.DAL\Northwind.DAL.csproj", "{659B5F66-E521-446B-8A85-05B6822C11F0}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Northwind.DAL.Tests", "Northwind.DAL.Tests\Northwind.DAL.Tests.csproj", "{1C087736-2C54-46F5-A773-F03AB94C4659}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +17,10 @@ Global
 		{659B5F66-E521-446B-8A85-05B6822C11F0}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{659B5F66-E521-446B-8A85-05B6822C11F0}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{659B5F66-E521-446B-8A85-05B6822C11F0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1C087736-2C54-46F5-A773-F03AB94C4659}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1C087736-2C54-46F5-A773-F03AB94C4659}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1C087736-2C54-46F5-A773-F03AB94C4659}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1C087736-2C54-46F5-A773-F03AB94C4659}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
